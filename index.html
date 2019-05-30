@@ -344,6 +344,794 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/06/Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chen.huazhu">
+      <meta itemprop="description" content="个人技术分享博客">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="耳东耳火">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/05/06/Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务/" class="post-title-link" itemprop="url">Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-06 20:38:53" itemprop="dateCreated datePublished" datetime="2018-05-06T20:38:53+08:00">2018-05-06</time>
+            
+
+            
+              
+
+              
+			    <!--
+                
+                <span class="post-meta-divider">|</span>
+                
+				
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-30 16:24:57" itemprop="dateModified" datetime="2019-05-30T16:24:57+08:00">2019-05-30</time>
+				-->
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Cloud-入门教程/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud 入门教程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="首先简单解释一下什么是声明式实现？"><a href="#首先简单解释一下什么是声明式实现？" class="headerlink" title="首先简单解释一下什么是声明式实现？"></a>首先简单解释一下什么是声明式实现？</h2><p>要做一件事， 需要知道三个要素，where, what, how。即在哪里（ where）用什么办法（how）做什么（what）。什么时候做（when）我们纳入how的范畴。</p>
+<p>1）编程式实现： 每一个要素（where，what，how）都需要用具体代码实现来表示。传统的方式一般都是编程式实现，业务开发者需要关心每一处逻辑</p>
+<p>2）声明式实现： 只需要声明在哪里（where ）做什么（what），而无需关心如何实现（how）。Spring的AOP就是一种声明式实现，比如网站检查是否登录，开发页面逻辑的时候，只需要通过AOP配置声明加载页面（where）需要做检查用户是否登录（what），而无需关心如何检查用户是否登录（how)。如何检查这个逻辑由AOP机制去实现， 而AOP的登录检查实现机制与正在开发页面的逻辑本身是无关的。</p>
+<p>在Spring Cloud Netflix栈中，各个微服务都是以HTTP接口的形式暴露自身服务的，因此在调用远程服务时就必须使用HTTP客户端。Feign就是Spring Cloud提供的一种声明式REST客户端。可以通过Feign访问调用远端微服务提供的REST接口。现在我们就用Feign来调用SERVICE-HELLOWORLD暴露的REST接口，以获取到“Hello World”信息。在使用Feign时，Spring Cloud集成了Ribbon和Eureka来提供HTTP客户端的负载均衡。</p>
+<h2 id="下面我们就采用Feign的方式来调用Hello-World服务集群。"><a href="#下面我们就采用Feign的方式来调用Hello-World服务集群。" class="headerlink" title="下面我们就采用Feign的方式来调用Hello World服务集群。"></a>下面我们就采用Feign的方式来调用Hello World服务集群。</h2><h3 id="1-创建Maven工程，加入spring-cloud-starter-openfeign依赖"><a href="#1-创建Maven工程，加入spring-cloud-starter-openfeign依赖" class="headerlink" title="1. 创建Maven工程，加入spring-cloud-starter-openfeign依赖"></a>1. 创建Maven工程，加入spring-cloud-starter-openfeign依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>完整的pom文件如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.1.5.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.cwalzy<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springcloud.helloworld.feign.client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>springcloud.helloworld.feign.client<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">description</span>&gt;</span>Demo Feigh client application<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">spring-cloud.version</span>&gt;</span>Greenwich.SR1<span class="tag">&lt;/<span class="name">spring-cloud.version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		</span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- &lt;artifactId&gt;spring-cloud-starter-feign&lt;/artifactId&gt; --&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		</span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="comment">&lt;!-- 使用Apache HttpClient替换Feign原生httpclient https://blog.csdn.net/u010277958/article/details/88730889--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- Http Client 支持 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.httpcomponents<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="comment">&lt;!-- Apache Http Client 对 Feign 支持 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.github.openfeign<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>feign-httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="comment">&lt;!-- &lt;dependency&gt;</span></span><br><span class="line"><span class="comment">		    &lt;groupId&gt;com.netflix.feign&lt;/groupId&gt;</span></span><br><span class="line"><span class="comment">		    &lt;groupId&gt;com.netflix.openfeign&lt;/groupId&gt;</span></span><br><span class="line"><span class="comment">		    &lt;artifactId&gt;feign-httpclient&lt;/artifactId&gt;</span></span><br><span class="line"><span class="comment">		    &lt;version&gt;$&#123;feign-httpclient.version&#125;&lt;/version&gt;</span></span><br><span class="line"><span class="comment">		&lt;/dependency&gt; --&gt;</span></span><br><span class="line">		<span class="comment">&lt;!-- OKHttp 对 Feign 支持 --&gt;</span></span><br><span class="line">		<span class="comment">&lt;!-- &lt;dependency&gt;</span></span><br><span class="line"><span class="comment">		    &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;</span></span><br><span class="line"><span class="comment">		    &lt;artifactId&gt;feign-okhttp&lt;/artifactId&gt;</span></span><br><span class="line"><span class="comment">		&lt;/dependency&gt; --&gt;</span></span><br><span class="line">		</span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		 <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix-dashboard<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-cloud.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="2-创建启动类，需呀加上-EnableFeignClients注解以使用Feign，-使用-EnableDiscoveryClient开启服务自动发现"><a href="#2-创建启动类，需呀加上-EnableFeignClients注解以使用Feign，-使用-EnableDiscoveryClient开启服务自动发现" class="headerlink" title="2. 创建启动类，需呀加上@EnableFeignClients注解以使用Feign， 使用@EnableDiscoveryClient开启服务自动发现"></a>2. 创建启动类，需呀加上@EnableFeignClients注解以使用Feign， 使用@EnableDiscoveryClient开启服务自动发现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.cwalzy.springcloudeureka;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.web.servlet.ServletRegistrationBean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;</span><br><span class="line"><span class="comment">//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span></span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.eureka.EnableEurekaClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.EnableFeignClients;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;</span><br><span class="line"></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableFeignClients</span></span><br><span class="line"><span class="meta">@EnableCircuitBreaker</span></span><br><span class="line"><span class="meta">@EnableHystrixDashboard</span></span><br><span class="line"><span class="comment">//@EnableDiscoveryClient</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringcloudHelloworldFeignClientApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(SpringcloudHelloworldFeignClientApplication.class, args);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//https://www.cnblogs.com/mark7/p/8920288.html</span></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> ServletRegistrationBean <span class="title">getServlet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	HystrixMetricsStreamServlet streamServlet = <span class="keyword">new</span> HystrixMetricsStreamServlet();</span><br><span class="line">	ServletRegistrationBean registrationBean = <span class="keyword">new</span> ServletRegistrationBean(streamServlet);</span><br><span class="line">	registrationBean.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">	registrationBean.addUrlMappings(<span class="string">"/actuator/hystrix.stream"</span>);</span><br><span class="line">	registrationBean.addUrlMappings(<span class="string">"/hystrix.stream"</span>);</span><br><span class="line">	registrationBean.setName(<span class="string">"HystrixMetricsStreamServlet"</span>);</span><br><span class="line">	<span class="keyword">return</span> registrationBean;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-添加配置文件application-yml-使用端口8902-名字定义为service-feign-并注册到eureka服务中心"><a href="#3-添加配置文件application-yml-使用端口8902-名字定义为service-feign-并注册到eureka服务中心" class="headerlink" title="3. 添加配置文件application.yml, 使用端口8902, 名字定义为service-feign, 并注册到eureka服务中心"></a>3. 添加配置文件application.yml, 使用端口8902, 名字定义为service-feign, 并注册到eureka服务中心</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">eureka:</span></span><br><span class="line"><span class="attr">   client:</span></span><br><span class="line"><span class="attr">      serviceUrl:</span></span><br><span class="line"><span class="attr">        defaultZone:</span> <span class="attr">http://localhost:8761/eureka/</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">   port:</span> <span class="number">8902</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">   application:</span></span><br><span class="line"><span class="attr">      name:</span> <span class="string">service-feign</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-定义Feign：一个用-FeignClient注解的接口类"><a href="#4-定义Feign：一个用-FeignClient注解的接口类" class="headerlink" title="4. 定义Feign：一个用@FeignClient注解的接口类"></a>4. 定义Feign：一个用@FeignClient注解的接口类</h3><p>@FeignClient用于通知Feign组件对该接口进行代理(不需要编写接口实现)，使用者可直接通过@Autowired注入; 该接口通过value定义了需要调用的SERVICE-HELLOWORLD服务（通过服务中心自动发现机制会定位具体URL）; @RequestMapping定义了Feign需要访问的SERVICE-HELLOWORLD服务的URL（本例中为根“/”）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> springcloud.helloworld.feign.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.feign.FeignClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMethod;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FeignClient</span>(value = <span class="string">"SERVICE-HELLOWORLD"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloWorldService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/"</span>,method = RequestMethod.GET)</span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Spring Cloud应用在启动时，Feign会扫描标有@FeignClient注解的接口，生成代理，并注册到Spring容器中。生成代理时Feign会为每个接口方法创建一个RequetTemplate对象，该对象封装了HTTP请求需要的全部信息，请求参数名、请求方法等信息都是在这个过程中确定的，Feign的模板化就体现在这里</p>
+<h3 id="5-定义一个WebController。"><a href="#5-定义一个WebController。" class="headerlink" title="5. 定义一个WebController。"></a>5. 定义一个WebController。</h3><p>注入之前通过@FeignClient定义生成的bean, </p>
+<p>sayHello()映射到 <a href="http://localhost:8902/hello" target="_blank" rel="noopener">http://localhost:8902/hello</a> , 在这里，我修改了Hello World服务的映射，将根“/”， 修改成了“/hello”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> springcloud.helloworld.feign.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMethod;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span> HelloWorldService helloWorldFeignService;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/hello"</span>,method = RequestMethod.GET)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> helloWorldFeignService.sayHello();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="6-启动Feign应用，-访问-http-localhost-8902-hello"><a href="#6-启动Feign应用，-访问-http-localhost-8902-hello" class="headerlink" title="6. 启动Feign应用， 访问 http://localhost:8902/hello"></a>6. 启动Feign应用， 访问 <a href="http://localhost:8902/hello" target="_blank" rel="noopener">http://localhost:8902/hello</a></h3><p>多次刷新，可以看到和前一章Ribbon里面的应用一样， 两个Hello World服务的输出交替出现。说明通过Feign访问服务， Spring Cloud已经缺省使用了Ribbon负载均衡。</p>
+<p><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559203747134.png" alt="enter description here"><br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559203755559.png" alt="enter description here"></p>
+<h3 id="7-在Feign中使用Apache-HTTP-Client"><a href="#7-在Feign中使用Apache-HTTP-Client" class="headerlink" title="7. 在Feign中使用Apache HTTP Client"></a>7. 在Feign中使用Apache HTTP Client</h3><p>Feign在默认情况下使用的是JDK原生的URLConnection发送HTTP请求，没有连接池，但是对每个地址gwai会保持一个长连接，即利用HTTP的persistence connection 。我们可以用Apache的HTTP Client替换Feign原始的http client, 从而获取连接池、超时时间等与性能息息相关的控制能力。Spring Cloud从Brixtion.SR5版本开始支持这种替换，首先在项目中声明Apache HTTP Client和feign-httpclient依赖：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 使用Apache HttpClient替换Feign原生httpclient https://blog.csdn.net/u010277958/article/details/88730889 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.httpcomponents<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- Apache Http Client 对 Feign 支持 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.github.openfeign<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>feign-httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>然后在application.properties中添加：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">feign<span class="selector-class">.httpclient</span><span class="selector-class">.enabled</span>=true</span><br></pre></td></tr></table></figure>
+<h3 id="8-Feign的Encoder、Decoder和ErrorDecoder"><a href="#8-Feign的Encoder、Decoder和ErrorDecoder" class="headerlink" title="8. Feign的Encoder、Decoder和ErrorDecoder"></a>8. Feign的Encoder、Decoder和ErrorDecoder</h3><p>Feign将方法签名中方法参数对象序列化为请求参数放到HTTP请求中的过程，是由编码器(Encoder)完成的。同理，将HTTP响应数据反序列化为Java对象是由解码器(Decoder)完成的。默认情况下，Feign会将标有@RequestParam注解的参数转换成字符串添加到URL中，将没有注解的参数通过Jackson转换成json放到请求体中。注意，如果在@RequetMapping中的method将请求方式指定为GET，那么所有未标注解的参数将会被忽略，例如：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@RequestMapping</span>(value = <span class="string">"/group/&#123;groupId&#125;"</span>, method = RequestMethod.GET)</span><br><span class="line">void update(<span class="variable">@PathVariable</span>(<span class="string">"groupId"</span>) Integer groupId, <span class="variable">@RequestParam</span>(<span class="string">"groupName"</span>) String groupName, DataObject obj);</span><br></pre></td></tr></table></figure>
+<p>此时因为声明的是GET请求没有请求体，所以obj参数就会被忽略。</p>
+<p>在Spring Cloud环境下，Feign的Encoder只会用来编码没有添加注解的参数。如果你自定义了Encoder, 那么只有在编码obj参数时才会调用你的Encoder。对于Decoder, 默认会委托给SpringMVC中的MappingJackson2HttpMessageConverter类进行解码。只有当状态码不在200 ~ 300之间时ErrorDecoder才会被调用。ErrorDecoder的作用是可以根据HTTP响应信息返回一个异常，该异常可以在调用Feign接口的地方被捕获到。我们目前就通过ErrorDecoder来使Feign接口抛出业务异常以供调用者处理。</p>
+<p>以上7～8完全摘自 <a href="http://blog.csdn.net/neosmith/article/details/52449921" target="_blank" rel="noopener">http://blog.csdn.net/neosmith/article/details/52449921</a></p>
+<blockquote>
+<p>本文转载自 <a href="https://www.cnblogs.com/chry/p/7266916.html" target="_blank" rel="noopener">https://www.cnblogs.com/chry/p/7266916.html</a><br>原文基于 spring boot 1.5.3.RELEASE 版本<br>而本文中有一些改动 是基于 spring boot 2.1.5.RELEASE 版本</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/06/Spring Cloud 入门教程（05）：Ribbon实现客户端的负载均衡/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chen.huazhu">
+      <meta itemprop="description" content="个人技术分享博客">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="耳东耳火">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/05/06/Spring Cloud 入门教程（05）：Ribbon实现客户端的负载均衡/" class="post-title-link" itemprop="url">Spring Cloud 入门教程（05）：Ribbon实现客户端的负载均衡</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-06 00:16:43" itemprop="dateCreated datePublished" datetime="2018-05-06T00:16:43+08:00">2018-05-06</time>
+            
+
+            
+              
+
+              
+			    <!--
+                
+                <span class="post-meta-divider">|</span>
+                
+				
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-30 15:42:53" itemprop="dateModified" datetime="2019-05-30T15:42:53+08:00">2019-05-30</time>
+				-->
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Cloud-入门教程/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud 入门教程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>接上节，假如我们的Hello world服务的访问量剧增，用一个服务已经无法承载， 我们可以把Hello World服务做成一个集群。 </p>
+<p>很简单，我们只需要复制Hello world服务，同时将原来的端口8762修改为8763。然后启动这两个Spring Boot应用， 就可以得到两个Hello World服务。这两个Hello world都注册到了eureka服务中心。这时候再访问 <a href="http://localhost:8761" target="_blank" rel="noopener">http://localhost:8761</a> ,可以看到两个hello world服务已经注册。（服务与注册参见 <a href="https://blog.chenhuazhu.top/2018/05/01/Spring%20Cloud%20%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B%EF%BC%8801%EF%BC%89%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" target="_blank" rel="noopener">Spring Cloud 入门教程（01）：服务注册</a>）。</p>
+<p><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559201492479.png" alt="enter description here"></p>
+<h2 id="1-客户端的负载均衡"><a href="#1-客户端的负载均衡" class="headerlink" title="1. 客户端的负载均衡"></a>1. 客户端的负载均衡</h2><p>负载均衡可分为服务端负载均衡和客户端负载均衡，服务端负载均衡完全由服务器处理，客户端不需要做任何事情。而客户端负载均衡技术，客户端需要维护一组服务器引用，每次客户端向服务端发请求的时候，会根据算法主动选中一个服务节点。常用的负载均衡算法有： Round Robbin,  Random，Hash，StaticWeighted等。</p>
+<p>Spring 提供两辆种服务调度方式：Ribbon+restful和Feign。Ribbon就是一个基于客户端的负载均衡器， Ribbon提供了很多在HTTP和TCP客户端之上的控制. </p>
+<p>Feign内部也已经使用了Ribbon, 所以只要使用了@FeignClient注解，那么这一章的内容也都是适用的。</p>
+<p>下面就看看如何Spring Cloud如何用Ribbon来实现两个Hello World服务的负载均衡。以下是Spring cloud的ribbon客户端负载均衡架构图。</p>
+<p><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559201597344.png" alt="enter description here"></p>
+<p>hello world服务和ribbon均注册到服务中心</p>
+<p>service-hi工程跑了两个副本，端口分别为8762,8763，分别向服务注册中心注册， 当sercvice-ribbon通过restTemplate调用service-Hellowworld的接口时，利用用ribbon进行负载均衡，会轮流的调用处于两个不同端口的Hello world服务</p>
+<h2 id="2-创建一个Ribbon服务"><a href="#2-创建一个Ribbon服务" class="headerlink" title="2. 创建一个Ribbon服务"></a>2. 创建一个Ribbon服务</h2><h3 id="1-创建一个maven工程，取名叫service-ribbon-pom-xml文件如下："><a href="#1-创建一个maven工程，取名叫service-ribbon-pom-xml文件如下：" class="headerlink" title="1) 创建一个maven工程，取名叫service-ribbon, pom.xml文件如下："></a>1) 创建一个maven工程，取名叫service-ribbon, pom.xml文件如下：</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.1.5.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.cwalzy<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springcloud.helloworld.ribbon.service<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>springcloud.helloworld.ribbon.service<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">description</span>&gt;</span>Demo project for Spring Cloud Ribbon<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">spring-cloud.version</span>&gt;</span>Greenwich.SR1<span class="tag">&lt;/<span class="name">spring-cloud.version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-ribbon<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		</span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		</span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix-dashboard<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-cloud.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-创建主类ServiceRibbonApplication"><a href="#2-创建主类ServiceRibbonApplication" class="headerlink" title="2). 创建主类ServiceRibbonApplication"></a>2). 创建主类ServiceRibbonApplication</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.cwalzy.ribbon;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.web.servlet.ServletRegistrationBean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.client.loadbalancer.LoadBalanced;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.client.RestTemplate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableDiscoveryClient</span><span class="comment">//@EnableDiscoveryClient向服务中心注册</span></span><br><span class="line"><span class="meta">@EnableCircuitBreaker</span></span><br><span class="line"><span class="meta">@EnableHystrixDashboard</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceRibbonApplication</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(ServiceRibbonApplication.class, args);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Bean</span><span class="comment">//注册了一个叫restTemplate的bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span><span class="comment">//@ LoadBalanced注册表明，这个restRemplate是需要做负载均衡的。 利用用ribbon进行负载均衡，会轮流的调用处于两个不同端口的Hello world服务</span></span><br><span class="line">    <span class="function">RestTemplate <span class="title">restTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RestTemplate();</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//https://www.cnblogs.com/mark7/p/8920288.html</span></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> ServletRegistrationBean <span class="title">getServlet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	HystrixMetricsStreamServlet streamServlet = <span class="keyword">new</span> HystrixMetricsStreamServlet();</span><br><span class="line">	ServletRegistrationBean registrationBean = <span class="keyword">new</span> ServletRegistrationBean(streamServlet);</span><br><span class="line">	registrationBean.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">	registrationBean.addUrlMappings(<span class="string">"/actuator/hystrix.stream"</span>);</span><br><span class="line">	registrationBean.addUrlMappings(<span class="string">"/hystrix.stream"</span>);</span><br><span class="line">	registrationBean.setName(<span class="string">"HystrixMetricsStreamServlet"</span>);</span><br><span class="line">	<span class="keyword">return</span> registrationBean;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>@EnableDiscoveryClient向服务中心注册，并且注册了一个叫restTemplate的bean。</p>
+<p>@ LoadBalanced注册表明，这个restRemplate是需要做负载均衡的。</p>
+<h3 id="3-创建获取一个获取Hello内容的service类"><a href="#3-创建获取一个获取Hello内容的service类" class="headerlink" title="3). 创建获取一个获取Hello内容的service类"></a>3). 创建获取一个获取Hello内容的service类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.cwalzy.ribbon;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.client.RestTemplate;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span> RestTemplate restTemplate;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getHelloContent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    	<span class="comment">//这里关键代码就是, restTemplate.getForObject方法会通过ribbon负载均衡机制， 自动选择一个Hello word服务，</span></span><br><span class="line">        <span class="keyword">return</span> restTemplate.getForObject(<span class="string">"http://SERVICE-HELLOWORLD/"</span>,String.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里关键代码就是, restTemplate.getForObject方法会通过ribbon负载均衡机制， 自动选择一个Hello word服务，</p>
+<p>这里的URL是 “<a href="http://SERVICE-HELLOWORLD/&quot;" target="_blank" rel="noopener">http://SERVICE-HELLOWORLD/&quot;</a> ，其中的SERVICE-HELLOWORLD是Hello world服务的名字，而注册到服务中心的有两个SERVICE-HELLOWORLD。 所以，这个调用本质是ribbon-service作为客户端根据负载均衡算法自主选择了一个作为服务端的SERVICE-HELLOWORLD服务。然后再访问选中的SERVICE-HELLOWORLD来执行真正的Hello world调用。</p>
+<h3 id="4-创建HelloController"><a href="#4-创建HelloController" class="headerlink" title="4). 创建HelloController"></a>4). 创建HelloController</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.cwalzy.ribbon;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Autowired</span> HelloService helloService;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">home</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> helloService.getHelloContent();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动ribbon-service应用 我们就可以访问 <a href="http://localhost:8901/" target="_blank" rel="noopener">http://localhost:8901/</a> , 然后每次刷新可以看到以下两种结果交替出现，表明实际调用的是在不同端口的不同的SERVICE-HELLOWORLD。<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559202159208.png" alt="enter description here"><br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559202171375.png" alt="enter description here"></p>
+<blockquote>
+<p>本文转载自 <a href="https://www.cnblogs.com/chry/p/7263281.html" target="_blank" rel="noopener">https://www.cnblogs.com/chry/p/7263281.html</a><br>原文基于 spring boot 1.5.3.RELEASE 版本<br>而本文中有一些改动 是基于 spring boot 2.1.5.RELEASE 版本</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/04/Spring Cloud 入门教程（04）：分布式环境下自动发现配置服务/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chen.huazhu">
+      <meta itemprop="description" content="个人技术分享博客">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="耳东耳火">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/05/04/Spring Cloud 入门教程（04）：分布式环境下自动发现配置服务/" class="post-title-link" itemprop="url">Spring Cloud 入门教程（04）：分布式环境下自动发现配置服务</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-04 23:13:24" itemprop="dateCreated datePublished" datetime="2018-05-04T23:13:24+08:00">2018-05-04</time>
+            
+
+            
+              
+
+              
+			    <!--
+                
+                <span class="post-meta-divider">|</span>
+                
+				
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-30 15:15:47" itemprop="dateModified" datetime="2019-05-30T15:15:47+08:00">2019-05-30</time>
+				-->
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Cloud-入门教程/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud 入门教程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>前一章， 我们的Hello world应用服务，通过配置服务器Config Server获取到了我们配置的hello信息“hello world”. 但自己的配置文件中必须配置config server的URL（<a href="http://localhost:8888）" target="_blank" rel="noopener">http://localhost:8888）</a>, 如果把config server搬到另外一个独立IP上， 那么作为一个client的hello world应用必须修改自己的bootstrap.yml中的config server的URL地址。这明显是不够方便的。</p>
+<p>既然config server已经注册到了eureka服务中心，能否让服务中心自动帮hello world应用找到它需要的config server呢？ 答案是肯定的。我们的hello world应用只需要提供它需要的配置所在在的config server的名字就可以了， 在前面例子中，配置服务的名字就是“config-server”。那我们现在就把之前的服务和应用稍作修改， 来达到自动发现服务的方案。下图是Spring Cloud提供的服务发现机制。Config-server是其中的Service Provider, Config-client是Service Consumer， 它们都注册到服务中心Eureka Server。<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559200196026.png" alt="enter description here"></p>
+<h2 id="1-将config-server注册到服务中心"><a href="#1-将config-server注册到服务中心" class="headerlink" title="1. 将config-server注册到服务中心"></a>1. 将config-server注册到服务中心</h2><p>config-server本身就是一个Spring Boot应用， 可以直接参考 <a href="https://blog.chenhuazhu.top/2018/05/01/Spring%20Cloud%20%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B%EF%BC%8801%EF%BC%89%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C/" target="_blank" rel="noopener">Spring Cloud 入门教程（01）：服务注册</a> , 将config-server注册到eureka server中。访问<a href="http://localhost:8761" target="_blank" rel="noopener">http://localhost:8761</a>, 可以看到我们的config-server已经注册。<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559200234065.png" alt="enter description here"></p>
+<h2 id="2-修改hello-world应用的配置"><a href="#2-修改hello-world应用的配置" class="headerlink" title="2. 修改hello world应用的配置"></a>2. 修改hello world应用的配置</h2><p>1）.同样，需要将Hello 我让你的应用注册到eureka 服务中心, 配置方法同前面一样， 不在赘述。</p>
+<p>2）.修改配置文件，将config-server的URL硬编码机制改成，通过服务中心根据名字自动发现机制， 修改bootstrap.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">eureka:</span></span><br><span class="line"><span class="attr">  client:</span></span><br><span class="line"><span class="attr">    serviceUrl:</span></span><br><span class="line"><span class="attr">      defaultZone:</span> <span class="attr">http://localhost:8761/eureka/</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  application:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">config-client</span></span><br><span class="line"><span class="attr">  cloud:</span></span><br><span class="line"><span class="attr">    config:</span></span><br><span class="line"><span class="attr">      label:</span> <span class="string">master</span></span><br><span class="line"><span class="attr">      profile:</span> <span class="string">dev</span></span><br><span class="line"><span class="comment">#      uri: http://localhost:8888/</span></span><br><span class="line"><span class="attr">      discovery:</span></span><br><span class="line"><span class="attr">         enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">         serviceId:</span> <span class="string">config-server</span></span><br><span class="line"><span class="attr">management:</span></span><br><span class="line"><span class="attr">  security:</span></span><br><span class="line"><span class="attr">    enabled:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">8881</span></span><br></pre></td></tr></table></figure>
+<p>我们注释掉了硬编码的config-server的URL配置， 取而代之的是服务注册中心的地址 <a href="http://localhost:8761/eureka/" target="_blank" rel="noopener">http://localhost:8761/eureka/</a> 以及配置服务的名字“config-server”, 同时打开自动发现机制discovery.enable = true. 我们在运行一下hello world应用， 可以发现， GIT里面的内容依然可以访问。此时我们的hello world应用已经完全不知道配置服务的地址，也不知道配置的内容， 所有这些都通过服务注册中心自动发现。<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559200384740.png" alt="enter description here"></p>
+<h2 id="3-配置微服务集群化"><a href="#3-配置微服务集群化" class="headerlink" title="3. 配置微服务集群化"></a>3. 配置微服务集群化</h2><p> 当服务很多时，都需要同时从配置中心读取文件的时候，这时我们可以考虑将配置中心做成一个微服务，并且将其集群化，从而达到高可用，架构图如下：<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559200400682.png" alt="enter description here"></p>
+<blockquote>
+<p>本文转载自 <a href="https://www.cnblogs.com/chry/p/7262088.html" target="_blank" rel="noopener">https://www.cnblogs.com/chry/p/7262088.html</a><br>原文基于 spring boot 1.5.3.RELEASE 版本<br>而本文中有一些改动 是基于 spring boot 2.1.5.RELEASE 版本</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/03/Spring Cloud 入门教程（03）：配置自动刷新/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="chen.huazhu">
+      <meta itemprop="description" content="个人技术分享博客">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="耳东耳火">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/05/03/Spring Cloud 入门教程（03）：配置自动刷新/" class="post-title-link" itemprop="url">Spring Cloud 入门教程（03）：配置自动刷新</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-03 20:23:51" itemprop="dateCreated datePublished" datetime="2018-05-03T20:23:51+08:00">2018-05-03</time>
+            
+
+            
+              
+
+              
+			    <!--
+                
+                <span class="post-meta-divider">|</span>
+                
+				
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-30 15:01:23" itemprop="dateModified" datetime="2019-05-30T15:01:23+08:00">2019-05-30</time>
+				-->
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Cloud-入门教程/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud 入门教程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>之前讲的配置管理， 只有在应用启动时会读取到GIT的内容， 之后只要应用不重启，GIT中文件的修改，应用无法感知， 即使重启Config Server也不行。</p>
+<p>比如上一单元（<a href="https://blog.chenhuazhu.top/2018/05/02/Spring%20Cloud%20%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B%EF%BC%8802%EF%BC%89%EF%BC%9A%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/" target="_blank" rel="noopener">Spring Cloud 入门教程（02）：配置管理</a>）中的Hello World 应用，手动更新GIT中配置文件config-client-dev.properties的内容（别忘了用GIT push到服务器）</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello=Hello World from GIT version 1</span><br></pre></td></tr></table></figure>
+<p>刷新 <a href="http://locahost/8881/hello" target="_blank" rel="noopener">http://locahost/8881/hello</a> ，页面内容仍然和之前一样，并没有反映GIT中最新改变， 重启config-server也一样，没有任何变化。<br>要让客户端应用感知到这个变哈， Spring Cloud提供了解决方案是，客户端用POST请求/refresh方法就可以刷新配置内容。</p>
+<h2 id="1-让客户端支持-actuator-refresh方法"><a href="#1-让客户端支持-actuator-refresh方法" class="headerlink" title="1. 让客户端支持 actuator/refresh方法"></a>1. 让客户端支持 actuator/refresh方法</h2><p>要让 actuator/refresh生效，客户端需要增加一些代码支持：</p>
+<ol>
+<li>首先，在pom.xml中添加以下依赖。spring-boot-starter-actuator是一套监控的功能，可以监控程序在运行时状态，其中就包括/refresh的功能。</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>其次，开启refresh机制， 需要给加载变量的类上面加载@RefreshScope注解，其它代码可不做任何改变，那么在客户端执行/refresh的时候就会更新此类下面的变量值，包括通过config client从GIT获取的配置。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.cwalzy.config.client;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Value;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.context.config.annotation.RefreshScope;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="comment">//开启refresh机制， 需要给加载变量的类上面加载@RefreshScope注解，其它代码可不做任何改变，</span></span><br><span class="line"><span class="comment">//那么在客户端执行actuator/refresh的时候就会更新此类下面的变量值，包括通过config client从GIT获取的配置。</span></span><br><span class="line"><span class="meta">@RefreshScope</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringcloudHelloworldConfigClientApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(SpringcloudHelloworldConfigClientApplication.class, args);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Value</span>(<span class="string">"$&#123;hello&#125;"</span>)</span><br><span class="line">    String hello;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> hello;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li><p>修改bootstrap.yml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">eureka:</span><br><span class="line">  client:</span><br><span class="line">    serviceUrl:</span><br><span class="line">      defaultZone: http://localhost:8761/eureka/</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: config-client</span><br><span class="line">  cloud:</span><br><span class="line">    config:</span><br><span class="line">      label: master</span><br><span class="line">      profile: dev</span><br><span class="line">#      uri: http://localhost:8888/</span><br><span class="line">      discovery:</span><br><span class="line">         enabled: true</span><br><span class="line">         serviceId: config-server</span><br><span class="line">server:</span><br><span class="line">  port: 8881</span><br><span class="line">management:</span><br><span class="line">  security:</span><br><span class="line">    enabled: false</span><br><span class="line">  endpoints:</span><br><span class="line">    web:</span><br><span class="line">      exposure:</span><br><span class="line">        include: health, info, refresh, bus-refresh</span><br><span class="line">  endpoint:</span><br><span class="line">    bus-refresh:</span><br><span class="line">      enabled: true</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动应用， 查看<a href="http://localhost:8881/hello" target="_blank" rel="noopener">http://localhost:8881/hello</a></p>
+</li>
+<li>再次修改config-client-dev.properties的内容</li>
+</ol>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello=Hello World from GIT version 2</span><br></pre></td></tr></table></figure>
+<ol start="6">
+<li><p>用chome的postman发送POST请求：<a href="http://localhost:8881/actuator/refresh" target="_blank" rel="noopener">http://localhost:8881/actuator/refresh</a> 可以从POST的结果看到，此次refresh刷新的配置变量有hello<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559199393592.png" alt="enter description here"></p>
+</li>
+<li><p>再次访问 <a href="http://localhost:8881/hello" target="_blank" rel="noopener">http://localhost:8881/hello</a> ，可见到配置已经被刷新<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559199423226.png" alt="enter description here"></p>
+</li>
+</ol>
+<h2 id="2-通过Webhook自动触发actuator-refresh方法刷新配置"><a href="#2-通过Webhook自动触发actuator-refresh方法刷新配置" class="headerlink" title="2. 通过Webhook自动触发actuator/refresh方法刷新配置"></a>2. 通过Webhook自动触发actuator/refresh方法刷新配置</h2><p>以上每当GIT中配置文件被修改，仍然需要我们主动调用actuator/refresh方法（手动调用或者写代码调用）， 有没有办法让GIT中配置有改动就自动触发客户端的rfresh机制呢？ 答案是：有。可以通过GIT提供的githook来监听push命令，如果项目中使用了Jenkins等持续集成工具（也是利用githook来监听的），就可以监听事件处理中直接调用actuator/refresh方法就可以了。</p>
+<blockquote>
+<p>本文转载自 <a href="https://www.cnblogs.com/chry/p/7260778.html" target="_blank" rel="noopener">https://www.cnblogs.com/chry/p/7260778.html</a><br>原文基于 spring boot 1.5.3.RELEASE 版本<br>而本文中有一些改动 是基于 spring boot 2.1.5.RELEASE 版本</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/02/Spring Cloud 入门教程（02）：配置管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -750,263 +1538,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/28/Github-Hexo-搭建个人博客/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chen.huazhu">
-      <meta itemprop="description" content="个人技术分享博客">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="耳东耳火">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/04/28/Github-Hexo-搭建个人博客/" class="post-title-link" itemprop="url">Github+Hexo 搭建个人博客</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-04-28 22:45:01" itemprop="dateCreated datePublished" datetime="2018-04-28T22:45:01+08:00">2018-04-28</time>
-            
-
-            
-              
-
-              
-			    <!--
-                
-                <span class="post-meta-divider">|</span>
-                
-				
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-05-30 09:45:53" itemprop="dateModified" datetime="2019-05-30T09:45:53+08:00">2019-05-30</time>
-				-->
-              
-            
-          </span>
-
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Github-网站托管"><a href="#Github-网站托管" class="headerlink" title="Github 网站托管"></a><strong>Github 网站托管</strong></h3><p>github的Pages功能，允许用户自定义项目首页，用来替代默认的源码列表。所以，<a href="https://pages.github.com/" target="_blank" rel="noopener">github Pages</a>可以被认为是用户编写的、托管在github上的静态网页。</p>
-<p>==托管在github的优点==</p>
-<ul>
-<li>免费，无限流量。</li>
-<li>享受git的版本管理功能，不用担心文章遗失。</li>
-<li>你只要用自己喜欢的编辑器写文章就可以了，其他事情一概不用操心，都由github处理。</li>
-</ul>
-<p>==如何搭建这个代码托管仓库呢？== </p>
-<ol>
-<li>首先你要到<a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>上注册一个账号,假设注册的用户名为：xxx</li>
-<li>点击New repository –&gt; 输入仓库名称格式为：用户名.github.io (如：xxx.github.io) -&gt; 点击Create repository<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559102611618.png" alt="enter description here"><br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559102763019.png" alt="enter description here"></li>
-</ol>
-<blockquote>
-<p><strong><em>创建一个和你用户名相同的仓库，后面加.github.io，只有这样，将来要部署到GitHub page的时候，才会被识别，也就是xxxx.github.io，其中xxx就是你注册GitHub的用户名。我这里是已经建过了。</em></strong></p>
-</blockquote>
-<ol start="3">
-<li>浏览器里访问 <a href="https://xxx.github.io/" target="_blank" rel="noopener">https://xxx.github.io/</a>, 可以发现这个url可以被访问了，你可以把改仓库拉取到本地，然后在里面新建一个index.html的文件,在里面输入任意内容，然后再把代码推送到git上，然后再访问改链接，可以发现index.html里面的内容被访问到了。<br>到这里，一个免费且无限流量的github代码托管仓库就创建完成了。</li>
-</ol>
-<h3 id="Hexo部署"><a href="#Hexo部署" class="headerlink" title="Hexo部署"></a><strong>Hexo部署</strong></h3><ul>
-<li><p><strong>安装前提</strong><br>安装Hexo之前，必须保证自己的电脑中已经安装好了Node.js和Git。因为这两个软件我之前都安装过，这里就不重复安装过程了，检验方式如下：<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559109262507.png" alt="enter description here"></p>
-</li>
-<li><p><strong>安装Hexo</strong><br>安装好node.js和git后，可以通过npm来安装Hexo。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><strong>建站</strong><br>之后就可以在电脑里新建一个文件夹来作为存放博客全部内容的大本营了。我们直接用hexo命令来初始化博客文件夹：</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo init &lt;folder&gt;</span><br><span class="line">cd &lt;folder&gt;</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p><strong>站内内容</strong><br>新建好的文件夹目录如下：</p>
-<blockquote>
-<p>.<br>├── _config.yml<br>├── package.json<br>├── scaffolds<br>├── source<br>|   ├── _drafts<br>|   └── _posts<br>└── themes</p>
-</blockquote>
-<p>这里解释一下各个文件夹的作用：</p>
-<p><strong>config.yml</strong><br>博客的配置文件，博客的名称、关键词、作者、语言、博客主题…设置都在里面。<br><strong>package.json</strong><br>应用程序信息，新添加的插件内容也会出现在这里面，我们可以不修改这里的内容。<br><strong>scaffolds</strong><br>scaffolds就是脚手架的意思，这里放了三个模板文件，分别是新添加博客文章（posts）、新添加博客页（page）和新添加草稿（draft）的目标样式。<br>这部分可以修改的内容是，我们可以在模板上添加比如categories等自定义内容<br><strong>source</strong><br>source是放置我们博客内容的地方，里面初始只有两个文件夹，一个是drafts（草稿），一个posts（文章），但之后我们通过命令新建tags（标签）还有categories（分类）页后，这里会相应地增加文件夹。<br><strong>themes</strong><br>放置主题文件包的地方。Hexo会根据这个文件来生成静态页面。<br>初始状态下只有landscape一个文件夹，后续我们可以添加自己喜欢的。</p>
-</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p><strong>Hexo命令</strong></p>
-<p>  <strong>新建一个网站</strong></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init &lt;folder&gt;</span><br></pre></td></tr></table></figure>
-<p>  <strong>新建文章或页面</strong></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new &lt;layout&gt; &quot;title&quot;</span><br></pre></td></tr></table></figure>
-<p>  这里的&lt;layout&gt;对应我们要添加的内容，如果是posts就是添加新的文章，如果是page就是添加新的页面。</p>
-<p>  默认是添加posts。</p>
-<p>  然后我们就可以在对应的posts或drafts文件夹里找到我们新建的文件，然后在文件里用Markdown的格式来写作了。</p>
-<p>  <strong>生成静态页面</strong></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo generate</span><br></pre></td></tr></table></figure>
-<p>  也可以简写成</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
-<p>  <strong>将内容部署到网站</strong></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p>  <strong>发布内容，实际上是将内容从drafts（草稿）文件夹移到posts（文章）文件夹。</strong></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo publish &lt;layout&gt; &lt;filename&gt;</span><br></pre></td></tr></table></figure>
-<p>  <strong>启动服务器，默认情况下，访问网站为<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a></strong></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-<p>  <strong>清除</strong></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<blockquote>
-<p>除了第一次部署的时候，我们会重点用到hexo init这个命令外，在平时写博客和发布过程中最常用的就是：</p>
-<ul>
-<li>hexo new <filename> 新建文章</filename></li>
-<li>hexo server 启动服务器，在本地查看内容</li>
-<li>hexo generate 生成静态页面</li>
-<li>hexo deploy 部署到网站<br>以上四个步骤。</li>
-</ul>
-</blockquote>
-<ul>
-<li><p><strong>推送内容到github</strong><br> <strong>打开hexo文件夹里的配置文件config.yml，添加部署路径</strong></p>
- <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">	  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">	  <span class="attr">repo:</span> <span class="attr">https://github.com/chz613/chz613.github.io.git</span></span><br><span class="line">	  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-<p> <i class="far fa-comments"></i>==如果你之前没有用git关联过自己的github库，需要配置SSH等参数，否则无法成功，这部分搜git就有很多相关教程==</p>
-<p> <strong>安装deploy-git 也就是部署的命令,这样你才能用命令部署到GitHub</strong></p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-<p> <strong>然后</strong></p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-<p> 其中 hexo clean清除了你之前生成的东西，也可以不加。<br> hexo generate 顾名思义，生成静态文章，可以用 hexo g缩写<br> hexo deploy 部署文章，可以用hexo d缩写</p>
-<p> 注意deploy时可能要你输入username和password。</p>
-</li>
-</ul>
-<ul>
-<li><p><strong>设置个人域名</strong></p>
-<ul>
-<li><p>进入个人域名的管理后台，添加解析。<br>记录类型选CNAME，记录值是自己github生成页面的地址。<br>注意，解析线路选择默认，不要选境外。境外是后面来做国内外分流用的。记得现在选择默认！！</p>
-<ul>
-<li>登录GitHub，进入之前创建的仓库，点击settings，设置Custom domain，输入你的域名</li>
-<li>然后在你的博客文件source中创建一个名为CNAME文本文件，不要后缀。写上你的域名。</li>
-<li><p>最后，在gitbash中，输入</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo <span class="keyword">g</span></span><br><span class="line">hexo <span class="built_in">d</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>过不了多久，再打开你的浏览器，输入你自己的域名，就可以看到搭建的网站啦！</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>参考 <a href="https://blog.csdn.net/sinat_37781304/article/details/82729029" target="_blank" rel="noopener">https://blog.csdn.net/sinat_37781304/article/details/82729029</a><br><a href="https://www.jianshu.com/p/21c94eb7bcd1" target="_blank" rel="noopener">https://www.jianshu.com/p/21c94eb7bcd1</a></p>
-</blockquote>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1049,7 +1580,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
