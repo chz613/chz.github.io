@@ -100,7 +100,7 @@
 <meta name="keywords" content="Spring Cloud">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Cloud 入门教程（01）：服务注册">
-<meta property="og:url" content="http://yoursite.com/2018/05/01/Spring Cloud 入门教程（01）：服务注册/index.html">
+<meta property="og:url" content="http://yoursite.com/post/springcloud-rudiments-01">
 <meta property="og:site_name" content="耳东耳火">
 <meta property="og:description" content="1. 什么是Spring Cloud？Spring提供了一系列工具，可以帮助开发人员迅速搭建分布式系统中的公共组件（比如：配置管理，服务发现，断路器，智能路由，微代理，控制总线，一次性令牌，全局锁，主节点选举， 分布式session, 集群状态）。协调分布式环境中各个系统，为各类服务提供模板性配置。使用Spring Cloud, 开发人员可以搭建实现了这些样板的应用，并且在任何分布式环境下都能工作">
 <meta property="og:locale" content="zh-CN">
@@ -108,7 +108,7 @@
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559184293659.png">
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559194138059.png">
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559194165017.png">
-<meta property="og:updated_time" content="2019-05-30T06:18:08.887Z">
+<meta property="og:updated_time" content="2019-05-30T10:16:18.357Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Cloud 入门教程（01）：服务注册">
 <meta name="twitter:description" content="1. 什么是Spring Cloud？Spring提供了一系列工具，可以帮助开发人员迅速搭建分布式系统中的公共组件（比如：配置管理，服务发现，断路器，智能路由，微代理，控制总线，一次性令牌，全局锁，主节点选举， 分布式session, 集群状态）。协调分布式环境中各个系统，为各类服务提供模板性配置。使用Spring Cloud, 开发人员可以搭建实现了这些样板的应用，并且在任何分布式环境下都能工作">
@@ -120,7 +120,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/2018/05/01/Spring Cloud 入门教程（01）：服务注册/">
+  <link rel="canonical" href="http://yoursite.com/post/springcloud-rudiments-01">
 
 
 
@@ -195,7 +195,7 @@
     </div>
     
       
-        <p class="site-subtitle">技术 博客</p>
+        <p class="site-subtitle">Java Spring SpringBoot SpringCloud</p>
       
     
     
@@ -350,11 +350,11 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/01/Spring Cloud 入门教程（01）：服务注册/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/post/springcloud-rudiments-01">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="chen.huazhu">
-      <meta itemprop="description" content="个人技术分享博客">
+      <meta itemprop="description" content="I am a programmer">
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
@@ -411,7 +411,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-30 14:18:08" itemprop="dateModified" datetime="2019-05-30T14:18:08+08:00">2019-05-30</time>
+                <time title="修改时间：2019-05-30 18:16:18" itemprop="dateModified" datetime="2019-05-30T18:16:18+08:00">2019-05-30</time>
 				-->
               
             
@@ -523,7 +523,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/05/02/Spring Cloud 入门教程（02）：配置管理/" rel="prev" title="Spring Cloud 入门教程（02）：配置管理">
+              <a href="/post/springcloud-rudiments-02" rel="prev" title="Spring Cloud 入门教程（02）：配置管理">
                 Spring Cloud 入门教程（02）：配置管理 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -584,7 +584,7 @@
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
               <p class="site-author-name" itemprop="name">chen.huazhu</p>
-              <div class="site-description motion-element" itemprop="description">个人技术分享博客</div>
+              <div class="site-description motion-element" itemprop="description">I am a programmer</div>
           </div>
 
           
