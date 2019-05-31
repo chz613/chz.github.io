@@ -14,7 +14,7 @@
   
 
 
-<html class="theme-next mist use-motion" lang="zh-CN">
+<html class="theme-next pisces use-motion" lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -70,7 +70,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Mist',
+    scheme: 'Pisces',
     version: '7.1.1',
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
     back2top: true,
@@ -100,8 +100,8 @@
 <meta name="keywords" content="Spring Cloud">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Cloud 入门教程（01）：服务注册">
-<meta property="og:url" content="https://blog.chenhuazhu.top/post/springcloud-rudiments-01/index.html">
-<meta property="og:site_name" content="耳东耳火">
+<meta property="og:url" content="https://blog.chenhuazhu.top/post/springcloud-rudiments-01.html">
+<meta property="og:site_name" content="篱笆外的古道">
 <meta property="og:description" content="1. 什么是Spring Cloud？Spring提供了一系列工具，可以帮助开发人员迅速搭建分布式系统中的公共组件（比如：配置管理，服务发现，断路器，智能路由，微代理，控制总线，一次性令牌，全局锁，主节点选举， 分布式session, 集群状态）。协调分布式环境中各个系统，为各类服务提供模板性配置。使用Spring Cloud, 开发人员可以搭建实现了这些样板的应用，并且在任何分布式环境下都能工作">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559184031636.png">
@@ -120,7 +120,7 @@
 
   
   
-  <link rel="canonical" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-01/">
+  <link rel="canonical" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-01">
 
 
 
@@ -130,7 +130,7 @@
   };
 </script>
 
-  <title>Spring Cloud 入门教程（01）：服务注册 | 耳东耳火</title>
+  <title>Spring Cloud 入门教程（01）：服务注册 | 篱笆外的古道</title>
   
 
 
@@ -189,13 +189,13 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">耳东耳火</span>
+        <span class="site-title">篱笆外的古道</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
     
       
-        <p class="site-subtitle">Java Spring SpringBoot SpringCloud</p>
+        <p class="site-subtitle">Just Do It</p>
       
     
     
@@ -247,7 +247,7 @@
 
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+    <a href="/tags.html" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
 
   </li>
         
@@ -264,7 +264,7 @@
 
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+    <a href="/categories.html" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
 
   </li>
         
@@ -298,7 +298,7 @@
 
     
 
-    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+    <a href="/about.html" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
 
   </li>
 
@@ -306,9 +306,6 @@
       
     </ul>
   
-
-  
-    
 
   
 
@@ -331,6 +328,9 @@
       <div class="main-inner">
         <div class="content-wrap">
           
+            
+
+          
           <div id="content" class="content">
             
 
@@ -350,16 +350,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-01/">
+    <link itemprop="mainEntityOfPage" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-01.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chen.huazhu">
-      <meta itemprop="description" content="I am a programmer">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="其实我是一个程序员">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/header.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="耳东耳火">
+      <meta itemprop="name" content="篱笆外的古道">
     </span>
 
     
@@ -523,7 +523,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/post/springcloud-rudiments-02/" rel="prev" title="Spring Cloud 入门教程（02）：配置管理">
+              <a href="/post/springcloud-rudiments-02.html" rel="prev" title="Spring Cloud 入门教程（02）：配置管理">
                 Spring Cloud 入门教程（02）：配置管理 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -583,8 +583,10 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">chen.huazhu</p>
-              <div class="site-description motion-element" itemprop="description">I am a programmer</div>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="其实我是一个程序员">
+            
+              <p class="site-author-name" itemprop="name">其实我是一个程序员</p>
+              <div class="site-description motion-element" itemprop="description"></div>
           </div>
 
           
@@ -606,10 +608,12 @@
                 <div class="site-state-item site-state-categories">
                   
                     
-                      <a href="/categories/">
+                      <a href="/categories.html">
                     
                   
                     
+                    
+                      
                     
                       
                     
@@ -625,10 +629,16 @@
                 <div class="site-state-item site-state-tags">
                   
                     
-                      <a href="/tags/">
+                      <a href="/tags.html">
                     
                   
                     
+                    
+                      
+                    
+                      
+                    
+                      
                     
                       
                     
@@ -695,7 +705,7 @@
   <span class="with-love" id="animate">
     <i class="fa fa-snowflake-o"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">chen.huazhu</span>
+  <span class="author" itemprop="copyrightHolder">chz613@foxmail.com</span>
 
   
 
@@ -799,8 +809,9 @@
   
 
 
-  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+  <script src="/js/affix.js?v=7.1.1"></script>
 
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
 
 
 

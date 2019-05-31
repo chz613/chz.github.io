@@ -14,7 +14,7 @@
   
 
 
-<html class="theme-next mist use-motion" lang="zh-CN">
+<html class="theme-next pisces use-motion" lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -70,7 +70,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Mist',
+    scheme: 'Pisces',
     version: '7.1.1',
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
     back2top: true,
@@ -100,8 +100,8 @@
 <meta name="keywords" content="Spring Cloud">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Cloud 入门教程（07）：熔断机制 -- 断路器">
-<meta property="og:url" content="https://blog.chenhuazhu.top/post/springcloud-rudiments-07/index.html">
-<meta property="og:site_name" content="耳东耳火">
+<meta property="og:url" content="https://blog.chenhuazhu.top/post/springcloud-rudiments-07.html">
+<meta property="og:site_name" content="篱笆外的古道">
 <meta property="og:description" content="Spring Cloud的断路器对断路器模式不太清楚的话，可以参看另一篇博文：断路器（Curcuit Breaker）模式，下面直接介绍Spring Cloud的断路器如何使用。 SpringCloud Netflix实现了断路器库的名字叫Hystrix. 在微服务架构下，通常会有多个层次的服务调用. 下面是微服架构下, 浏览器端通过API访问后台微服务的一个示意图：一个微服务的超时失败可能导致瀑">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559205753312.png">
@@ -120,7 +120,7 @@
 
   
   
-  <link rel="canonical" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-07/">
+  <link rel="canonical" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-07">
 
 
 
@@ -130,7 +130,7 @@
   };
 </script>
 
-  <title>Spring Cloud 入门教程（07）：熔断机制 -- 断路器 | 耳东耳火</title>
+  <title>Spring Cloud 入门教程（07）：熔断机制 -- 断路器 | 篱笆外的古道</title>
   
 
 
@@ -189,13 +189,13 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">耳东耳火</span>
+        <span class="site-title">篱笆外的古道</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
     
       
-        <p class="site-subtitle">Java Spring SpringBoot SpringCloud</p>
+        <p class="site-subtitle">Just Do It</p>
       
     
     
@@ -247,7 +247,7 @@
 
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+    <a href="/tags.html" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
 
   </li>
         
@@ -264,7 +264,7 @@
 
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+    <a href="/categories.html" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
 
   </li>
         
@@ -298,7 +298,7 @@
 
     
 
-    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+    <a href="/about.html" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
 
   </li>
 
@@ -306,9 +306,6 @@
       
     </ul>
   
-
-  
-    
 
   
 
@@ -331,6 +328,9 @@
       <div class="main-inner">
         <div class="content-wrap">
           
+            
+
+          
           <div id="content" class="content">
             
 
@@ -350,16 +350,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-07/">
+    <link itemprop="mainEntityOfPage" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-07.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chen.huazhu">
-      <meta itemprop="description" content="I am a programmer">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="其实我是一个程序员">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/header.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="耳东耳火">
+      <meta itemprop="name" content="篱笆外的古道">
     </span>
 
     
@@ -522,7 +522,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/springcloud-rudiments-06/" rel="next" title="Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务">
+              <a href="/post/springcloud-rudiments-06.html" rel="next" title="Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务">
                 <i class="fa fa-chevron-left"></i> Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务
               </a>
             
@@ -532,7 +532,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/post/springcloud-rudiments-08/" rel="prev" title="Spring Cloud 入门教程（08）：断路器指标数据监控Hystrix Dashboard 和 Turbine">
+              <a href="/post/springcloud-rudiments-08.html" rel="prev" title="Spring Cloud 入门教程（08）：断路器指标数据监控Hystrix Dashboard 和 Turbine">
                 Spring Cloud 入门教程（08）：断路器指标数据监控Hystrix Dashboard 和 Turbine <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -592,8 +592,10 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">chen.huazhu</p>
-              <div class="site-description motion-element" itemprop="description">I am a programmer</div>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="其实我是一个程序员">
+            
+              <p class="site-author-name" itemprop="name">其实我是一个程序员</p>
+              <div class="site-description motion-element" itemprop="description"></div>
           </div>
 
           
@@ -615,10 +617,12 @@
                 <div class="site-state-item site-state-categories">
                   
                     
-                      <a href="/categories/">
+                      <a href="/categories.html">
                     
                   
                     
+                    
+                      
                     
                       
                     
@@ -634,10 +638,16 @@
                 <div class="site-state-item site-state-tags">
                   
                     
-                      <a href="/tags/">
+                      <a href="/tags.html">
                     
                   
                     
+                    
+                      
+                    
+                      
+                    
+                      
                     
                       
                     
@@ -704,7 +714,7 @@
   <span class="with-love" id="animate">
     <i class="fa fa-snowflake-o"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">chen.huazhu</span>
+  <span class="author" itemprop="copyrightHolder">chz613@foxmail.com</span>
 
   
 
@@ -808,8 +818,9 @@
   
 
 
-  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+  <script src="/js/affix.js?v=7.1.1"></script>
 
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
 
 
 

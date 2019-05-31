@@ -14,7 +14,7 @@
   
 
 
-<html class="theme-next mist use-motion" lang="zh-CN">
+<html class="theme-next pisces use-motion" lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -70,7 +70,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Mist',
+    scheme: 'Pisces',
     version: '7.1.1',
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
     back2top: true,
@@ -100,15 +100,15 @@
 <meta name="keywords" content="Spring Cloud">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Cloud 入门教程（05）：Ribbon实现客户端的负载均衡">
-<meta property="og:url" content="https://blog.chenhuazhu.top/post/springcloud-rudiments-05/index.html">
-<meta property="og:site_name" content="耳东耳火">
+<meta property="og:url" content="https://blog.chenhuazhu.top/post/springcloud-rudiments-05.html">
+<meta property="og:site_name" content="篱笆外的古道">
 <meta property="og:description" content="接上节，假如我们的Hello world服务的访问量剧增，用一个服务已经无法承载， 我们可以把Hello World服务做成一个集群。  很简单，我们只需要复制Hello world服务，同时将原来的端口8762修改为8763。然后启动这两个Spring Boot应用， 就可以得到两个Hello World服务。这两个Hello world都注册到了eureka服务中心。这时候再访问 http:/">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559201492479.png">
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559201597344.png">
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559202159208.png">
 <meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559202171375.png">
-<meta property="og:updated_time" content="2019-05-30T10:24:43.443Z">
+<meta property="og:updated_time" content="2019-05-31T09:53:35.235Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Cloud 入门教程（05）：Ribbon实现客户端的负载均衡">
 <meta name="twitter:description" content="接上节，假如我们的Hello world服务的访问量剧增，用一个服务已经无法承载， 我们可以把Hello World服务做成一个集群。  很简单，我们只需要复制Hello world服务，同时将原来的端口8762修改为8763。然后启动这两个Spring Boot应用， 就可以得到两个Hello World服务。这两个Hello world都注册到了eureka服务中心。这时候再访问 http:/">
@@ -120,7 +120,7 @@
 
   
   
-  <link rel="canonical" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-05/">
+  <link rel="canonical" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-05">
 
 
 
@@ -130,7 +130,7 @@
   };
 </script>
 
-  <title>Spring Cloud 入门教程（05）：Ribbon实现客户端的负载均衡 | 耳东耳火</title>
+  <title>Spring Cloud 入门教程（05）：Ribbon实现客户端的负载均衡 | 篱笆外的古道</title>
   
 
 
@@ -189,13 +189,13 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">耳东耳火</span>
+        <span class="site-title">篱笆外的古道</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
     
       
-        <p class="site-subtitle">Java Spring SpringBoot SpringCloud</p>
+        <p class="site-subtitle">Just Do It</p>
       
     
     
@@ -247,7 +247,7 @@
 
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+    <a href="/tags.html" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
 
   </li>
         
@@ -264,7 +264,7 @@
 
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+    <a href="/categories.html" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
 
   </li>
         
@@ -298,7 +298,7 @@
 
     
 
-    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+    <a href="/about.html" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
 
   </li>
 
@@ -306,9 +306,6 @@
       
     </ul>
   
-
-  
-    
 
   
 
@@ -331,6 +328,9 @@
       <div class="main-inner">
         <div class="content-wrap">
           
+            
+
+          
           <div id="content" class="content">
             
 
@@ -350,16 +350,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-05/">
+    <link itemprop="mainEntityOfPage" href="https://blog.chenhuazhu.top/post/springcloud-rudiments-05.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chen.huazhu">
-      <meta itemprop="description" content="I am a programmer">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="其实我是一个程序员">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/header.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="耳东耳火">
+      <meta itemprop="name" content="篱笆外的古道">
     </span>
 
     
@@ -411,7 +411,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-30 18:24:43" itemprop="dateModified" datetime="2019-05-30T18:24:43+08:00">2019-05-30</time>
+                <time title="修改时间：2019-05-31 17:53:35" itemprop="dateModified" datetime="2019-05-31T17:53:35+08:00">2019-05-31</time>
 				-->
               
             
@@ -465,7 +465,7 @@
 
       
         <p>接上节，假如我们的Hello world服务的访问量剧增，用一个服务已经无法承载， 我们可以把Hello World服务做成一个集群。 </p>
-<p>很简单，我们只需要复制Hello world服务，同时将原来的端口8762修改为8763。然后启动这两个Spring Boot应用， 就可以得到两个Hello World服务。这两个Hello world都注册到了eureka服务中心。这时候再访问 <a href="http://localhost:8761" target="_blank" rel="noopener">http://localhost:8761</a> ,可以看到两个hello world服务已经注册。（服务与注册参见 <a href="https://blog.chenhuazhu.top/post/springcloud-rudiments-01/">Spring Cloud 入门教程（01）：服务注册</a>）。</p>
+<p>很简单，我们只需要复制Hello world服务，同时将原来的端口8762修改为8763。然后启动这两个Spring Boot应用， 就可以得到两个Hello World服务。这两个Hello world都注册到了eureka服务中心。这时候再访问 <a href="http://localhost:8761" target="_blank" rel="noopener">http://localhost:8761</a> ,可以看到两个hello world服务已经注册。（服务与注册参见 <a href="https://blog.chenhuazhu.top/post/springcloud-rudiments-01.html">Spring Cloud 入门教程（01）：服务注册</a>）。</p>
 <p><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559201492479.png" alt="enter description here"></p>
 <h2 id="1-客户端的负载均衡"><a href="#1-客户端的负载均衡" class="headerlink" title="1. 客户端的负载均衡"></a>1. 客户端的负载均衡</h2><p>负载均衡可分为服务端负载均衡和客户端负载均衡，服务端负载均衡完全由服务器处理，客户端不需要做任何事情。而客户端负载均衡技术，客户端需要维护一组服务器引用，每次客户端向服务端发请求的时候，会根据算法主动选中一个服务节点。常用的负载均衡算法有： Round Robbin,  Random，Hash，StaticWeighted等。</p>
 <p>Spring 提供两辆种服务调度方式：Ribbon+restful和Feign。Ribbon就是一个基于客户端的负载均衡器， Ribbon提供了很多在HTTP和TCP客户端之上的控制. </p>
@@ -522,7 +522,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/springcloud-rudiments-04/" rel="next" title="Spring Cloud 入门教程（04）：分布式环境下自动发现配置服务">
+              <a href="/post/springcloud-rudiments-04.html" rel="next" title="Spring Cloud 入门教程（04）：分布式环境下自动发现配置服务">
                 <i class="fa fa-chevron-left"></i> Spring Cloud 入门教程（04）：分布式环境下自动发现配置服务
               </a>
             
@@ -532,7 +532,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/post/springcloud-rudiments-06/" rel="prev" title="Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务">
+              <a href="/post/springcloud-rudiments-06.html" rel="prev" title="Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务">
                 Spring Cloud 入门教程（06）：用声明式REST客户端Feign调用远端HTTP服务 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -592,8 +592,10 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">chen.huazhu</p>
-              <div class="site-description motion-element" itemprop="description">I am a programmer</div>
+              <img class="site-author-image" itemprop="image" src="/images/header.png" alt="其实我是一个程序员">
+            
+              <p class="site-author-name" itemprop="name">其实我是一个程序员</p>
+              <div class="site-description motion-element" itemprop="description"></div>
           </div>
 
           
@@ -615,10 +617,12 @@
                 <div class="site-state-item site-state-categories">
                   
                     
-                      <a href="/categories/">
+                      <a href="/categories.html">
                     
                   
                     
+                    
+                      
                     
                       
                     
@@ -634,10 +638,16 @@
                 <div class="site-state-item site-state-tags">
                   
                     
-                      <a href="/tags/">
+                      <a href="/tags.html">
                     
                   
                     
+                    
+                      
+                    
+                      
+                    
+                      
                     
                       
                     
@@ -704,7 +714,7 @@
   <span class="with-love" id="animate">
     <i class="fa fa-snowflake-o"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">chen.huazhu</span>
+  <span class="author" itemprop="copyrightHolder">chz613@foxmail.com</span>
 
   
 
@@ -808,8 +818,9 @@
   
 
 
-  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+  <script src="/js/affix.js?v=7.1.1"></script>
 
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
 
 
 
