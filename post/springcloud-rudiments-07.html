@@ -104,15 +104,15 @@
 <meta property="og:site_name" content="篱笆外的古道">
 <meta property="og:description" content="Spring Cloud的断路器对断路器模式不太清楚的话，可以参看另一篇博文：断路器（Curcuit Breaker）模式，下面直接介绍Spring Cloud的断路器如何使用。 SpringCloud Netflix实现了断路器库的名字叫Hystrix. 在微服务架构下，通常会有多个层次的服务调用. 下面是微服架构下, 浏览器端通过API访问后台微服务的一个示意图：一个微服务的超时失败可能导致瀑">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559205753312.png">
-<meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559205767996.png">
-<meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559206570813.png">
-<meta property="og:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559206577053.png">
-<meta property="og:updated_time" content="2019-05-30T10:15:17.572Z">
+<meta property="og:image" content="http://static.chenhuazhu.top/xsj/.png/1559205753312.png">
+<meta property="og:image" content="http://static.chenhuazhu.top/xsj/.png/1559205767996.png">
+<meta property="og:image" content="http://static.chenhuazhu.top/xsj/.png/1559206570813.png">
+<meta property="og:image" content="http://static.chenhuazhu.top/xsj/.png/1559206577053.png">
+<meta property="og:updated_time" content="2019-06-04T02:39:25.283Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Cloud 入门教程（07）：熔断机制 -- 断路器">
 <meta name="twitter:description" content="Spring Cloud的断路器对断路器模式不太清楚的话，可以参看另一篇博文：断路器（Curcuit Breaker）模式，下面直接介绍Spring Cloud的断路器如何使用。 SpringCloud Netflix实现了断路器库的名字叫Hystrix. 在微服务架构下，通常会有多个层次的服务调用. 下面是微服架构下, 浏览器端通过API访问后台微服务的一个示意图：一个微服务的超时失败可能导致瀑">
-<meta name="twitter:image" content="https://www.github.com/chz613/static/raw/master/xsj/.png/1559205753312.png">
+<meta name="twitter:image" content="http://static.chenhuazhu.top/xsj/.png/1559205753312.png">
 
 
 
@@ -281,7 +281,7 @@
 
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+    <a href="/archives/index.html" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
 
   </li>
         
@@ -411,7 +411,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-30 18:15:17" itemprop="dateModified" datetime="2019-05-30T18:15:17+08:00">2019-05-30</time>
+                <time title="修改时间：2019-06-04 10:39:25" itemprop="dateModified" datetime="2019-06-04T10:39:25+08:00">2019-06-04</time>
 				-->
               
             
@@ -429,7 +429,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Cloud-入门教程/" itemprop="url" rel="index"><span itemprop="name">Spring Cloud 入门教程</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spring-Cloud-入门教程/index.html" itemprop="url" rel="index"><span itemprop="name">Spring Cloud 入门教程</span></a></span>
 
                 
                 
@@ -465,7 +465,7 @@
 
       
         <h2 id="Spring-Cloud的断路器"><a href="#Spring-Cloud的断路器" class="headerlink" title="Spring Cloud的断路器"></a>Spring Cloud的断路器</h2><p>对断路器模式不太清楚的话，可以参看另一篇博文：<a href="https://www.cnblogs.com/chry/p/7278853.html" target="_blank" rel="noopener">断路器（Curcuit Breaker）模式</a>，下面直接介绍Spring Cloud的断路器如何使用。</p>
-<p>SpringCloud Netflix实现了断路器库的名字叫Hystrix. 在微服务架构下，通常会有多个层次的服务调用. 下面是微服架构下, 浏览器端通过API访问后台微服务的一个示意图：<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559205753312.png" alt="enter description here"><br>一个微服务的超时失败可能导致瀑布式连锁反映，下图中，Hystrix通过自主反馈实现的断路器， 防止了这种情况发生。<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559205767996.png" alt="enter description here"><br> 图中的服务B因为某些原因失败，变得不可用，所有对服务B的调用都会超时。当对B的调用失败达到一个特定的阀值(5秒之内发生20次失败是Hystrix定义的缺省值), 链路就会被处于open状态， 之后所有所有对服务B的调用都不会被执行， 取而代之的是由断路器提供的一个表示链路open的Fallback消息.  Hystrix提供了相应机制，可以让开发者定义这个Fallbak消息.</p>
+<p>SpringCloud Netflix实现了断路器库的名字叫Hystrix. 在微服务架构下，通常会有多个层次的服务调用. 下面是微服架构下, 浏览器端通过API访问后台微服务的一个示意图：<br><img src="http://static.chenhuazhu.top/xsj/.png/1559205753312.png" alt="enter description here"><br>一个微服务的超时失败可能导致瀑布式连锁反映，下图中，Hystrix通过自主反馈实现的断路器， 防止了这种情况发生。<br><img src="http://static.chenhuazhu.top/xsj/.png/1559205767996.png" alt="enter description here"><br> 图中的服务B因为某些原因失败，变得不可用，所有对服务B的调用都会超时。当对B的调用失败达到一个特定的阀值(5秒之内发生20次失败是Hystrix定义的缺省值), 链路就会被处于open状态， 之后所有所有对服务B的调用都不会被执行， 取而代之的是由断路器提供的一个表示链路open的Fallback消息.  Hystrix提供了相应机制，可以让开发者定义这个Fallbak消息.</p>
 <p>open的链路阻断了瀑布式错误， 可以让被淹没或者错误的服务有时间进行修复。这个fallback可以是另外一个Hystrix保护的调用, 静态数据，或者合法的空值. Fallbacks可以组成链式结构，所以，最底层调用其它业务服务的第一个Fallback返回静态数据.</p>
 <h2 id="具体实践"><a href="#具体实践" class="headerlink" title="具体实践"></a>具体实践</h2><p>下面，进入正题，在之前的两HELLO WORLD服务集群中加入断路器， 防止其中一个Hello world挂掉后， 导致系统发生连锁超时失败。</p>
 <h3 id="1-添加hystrix库支持断路器"><a href="#1-添加hystrix库支持断路器" class="headerlink" title="1. 添加hystrix库支持断路器"></a>1. 添加hystrix库支持断路器</h3><p>在maven工程（前面章节中介绍的Ribbon或者Feign工程）的pom.xml中<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
@@ -476,7 +476,7 @@
 <p>第一，fallbackMethod的返回值和参数类型需要和被@HystrixCommand注解的方法完全一致。否则会在运行时抛出异常。比如本例中，serviceFailure（）的返回值和getHelloContant()方法的返回值都是String。</p>
 <p>第二，当底层服务失败后，fallbackMethod替换的不是整个被@HystrixCommand注解的方法（本例中的getHelloContant),替换的只是通过restTemplate去访问的具体服务。可以从中的system输出看到， 即使失败，控制台输出里面依然会有“call SERVICE-HELLOWORLD”。</p>
 </blockquote>
-<p>启动eureka服务，只启动两个Helloworld服务，然后中断其中一个（模拟其中一个微服务挂起），访问 <a href="http://localhost:8901/" target="_blank" rel="noopener">http://localhost:8901/</a> 然后刷新, 由于有负载均衡可以看到以下两个页面交替出现。可以看到第二个被挂起的服务，被定义在Ribbon应该里面的错误处理方法替换了。<br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559206570813.png" alt="enter description here"><br><img src="https://www.github.com/chz613/static/raw/master/xsj/.png/1559206577053.png" alt="enter description here"></p>
+<p>启动eureka服务，只启动两个Helloworld服务，然后中断其中一个（模拟其中一个微服务挂起），访问 <a href="http://localhost:8901/" target="_blank" rel="noopener">http://localhost:8901/</a> 然后刷新, 由于有负载均衡可以看到以下两个页面交替出现。可以看到第二个被挂起的服务，被定义在Ribbon应该里面的错误处理方法替换了。<br><img src="http://static.chenhuazhu.top/xsj/.png/1559206570813.png" alt="enter description here"><br><img src="http://static.chenhuazhu.top/xsj/.png/1559206577053.png" alt="enter description here"></p>
 <h3 id="3-在Feign应用中使用断路器"><a href="#3-在Feign应用中使用断路器" class="headerlink" title="3. 在Feign应用中使用断路器"></a>3. 在Feign应用中使用断路器</h3><h4 id="1）-Feign内部已经支持了断路器，所以不需要想Ribbon方式一样，在Spring-Boot启动类上加额外注解"><a href="#1）-Feign内部已经支持了断路器，所以不需要想Ribbon方式一样，在Spring-Boot启动类上加额外注解" class="headerlink" title="1）. Feign内部已经支持了断路器，所以不需要想Ribbon方式一样，在Spring Boot启动类上加额外注解"></a>1）. Feign内部已经支持了断路器，所以不需要想Ribbon方式一样，在Spring Boot启动类上加额外注解</h4><h4 id="2）-用-FeignClient注解添加fallback类，-该类必须实现-FeignClient修饰的接口。"><a href="#2）-用-FeignClient注解添加fallback类，-该类必须实现-FeignClient修饰的接口。" class="headerlink" title="2）. 用@FeignClient注解添加fallback类， 该类必须实现@FeignClient修饰的接口。"></a>2）. 用@FeignClient注解添加fallback类， 该类必须实现@FeignClient修饰的接口。</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FeignClient(name = <span class="string">"SERVICE-HELLOWORLD"</span>, fallback = HelloWorldServiceFailure.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloWorldService</span> </span>&#123;</span><br><span class="line">	<span class="meta">@RequestMapping</span>(value = <span class="string">"/"</span>,method = RequestMethod.GET)</span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="3）-创建HelloWorldServiceFailure类，-必须实现被-FeignClient修饰的HelloWorldService接口。注意添加-Component或者-Service注解，在Spring容器中生成一个Bean"><a href="#3）-创建HelloWorldServiceFailure类，-必须实现被-FeignClient修饰的HelloWorldService接口。注意添加-Component或者-Service注解，在Spring容器中生成一个Bean" class="headerlink" title="3）.  创建HelloWorldServiceFailure类， 必须实现被@FeignClient修饰的HelloWorldService接口。注意添加@Component或者@Service注解，在Spring容器中生成一个Bean"></a>3）.  创建HelloWorldServiceFailure类， 必须实现被@FeignClient修饰的HelloWorldService接口。注意添加@Component或者@Service注解，在Spring容器中生成一个Bean</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.cwalzy.springcloudeureka;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorldServiceFailure</span> <span class="keyword">implements</span> <span class="title">HelloWorldService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"hello world service is not available ! we are repairing"</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"hello world service is not available ! we are repairing"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="4）-激活断路器"><a href="#4）-激活断路器" class="headerlink" title="4）. 激活断路器"></a>4）. 激活断路器</h4><p>Spring Cloud之前的Brixton版本中，Feign是缺省是自动激活了断路器的，但最近的Dalston版本已经将缺省配置修改为禁止。</p>
@@ -509,7 +509,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Spring-Cloud/" rel="tag"># Spring Cloud</a>
+            <a href="/tags/Spring-Cloud/index.html" rel="tag"># Spring Cloud</a>
           
         </div>
       
@@ -603,9 +603,9 @@
               
                 <div class="site-state-item site-state-posts">
                 
-                  <a href="/archives/">
+                  <a href="/archives/index.html">
                 
-                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -626,7 +626,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">1</span>
+                      
+                    
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -651,7 +653,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">1</span>
+                      
+                    
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
